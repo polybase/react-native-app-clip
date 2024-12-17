@@ -6,9 +6,10 @@ export function addPbxGroup(
   xcodeProject: XcodeProject,
   {
     projectName,
+    nativeClipSrcRootDir,
     targetName,
     platformProjectRoot,
-  }: { projectName: string; targetName: string; platformProjectRoot: string },
+  }: { projectName: string; nativeClipSrcRootDir: string; targetName: string; platformProjectRoot: string },
 ) {
   const targetPath = path.join(platformProjectRoot, targetName);
 
@@ -16,16 +17,26 @@ export function addPbxGroup(
     fs.mkdirSync(targetPath, { recursive: true });
   }
 
-  const filesToCopy = [
-    "SplashScreen.storyboard",
-    "AppDelegate.h",
-    "AppDelegate.mm",
-    "main.m",
-  ];
+  // const filesToCopy = [
+  //   "SplashScreen.storyboard",
+  //   "AppDelegate.h",
+  //   "AppDelegate.mm",
+  //   "main.m",
+  // ];
+
+  const nativeClipSrcRootDirPath = path.join(path.join(platformProjectRoot, ".."), nativeClipSrcRootDir)
+  console.log(`[addPbxGroup] nativeSrcRootDirPath = ${nativeClipSrcRootDirPath}`)
+  const filesToCopy = fs.readdirSync(nativeClipSrcRootDirPath)
 
   for (const file of filesToCopy) {
-    const source = path.join(platformProjectRoot, projectName, file);
-    copyFileSync(source, targetPath);
+    const source = path.join(nativeClipSrcRootDirPath, file);
+    if (fs.lstatSync(source).isDirectory()) {
+      console.log(`[addPbxGroup] Copying directory: ${source} to ${targetPath}`)
+      copyFolderRecursiveSync(source, targetPath)
+    } else {
+      console.log(`[addPbxGroup] Copying file: ${source} to ${targetPath}`)
+      copyFileSync(source, targetPath);
+    }
   }
 
   // Copy Images.xcassets
@@ -37,21 +48,23 @@ export function addPbxGroup(
   copyFolderRecursiveSync(imagesXcassetsSource, targetPath);
 
   // Add PBX group
-  const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
-    [
-      "AppDelegate.h",
-      "AppDelegate.mm",
-      "main.m",
-      "Info.plist",
-      "Images.xcassets",
-      "SplashScreen.storyboard",
-      `${targetName}.entitlements`,
-      "Supporting/Expo.plist",
-      /* "main.jsbundle", */
-    ],
-    targetName,
-    targetName,
-  );
+  // const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
+  //   [
+  //     "AppDelegate.h",
+  //     "AppDelegate.mm",
+  //     "main.m",
+  //     "Info.plist",
+  //     "Images.xcassets",
+  //     "SplashScreen.storyboard",
+  //     `${targetName}.entitlements`,
+  //     "Supporting/Expo.plist",
+  //     /* "main.jsbundle", */
+  //   ],
+  //   targetName,
+  //   targetName,
+  // );
+
+  const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(filesToCopy, targetName, targetName)
 
   // Add PBXGroup to top level group
   const groups = xcodeProject.hash.project.objects.PBXGroup;

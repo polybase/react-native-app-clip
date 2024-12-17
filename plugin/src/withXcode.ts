@@ -10,10 +10,11 @@ import { addXCConfigurationList } from "./xcode/addXCConfigurationList";
 
 export const withXcode: ConfigPlugin<{
   name: string;
+  nativeClipSrcRootDir: string;
   targetName: string;
   bundleIdentifier: string;
   deploymentTarget: string;
-}> = (config, { name, targetName, bundleIdentifier, deploymentTarget }) => {
+}> = (config, { name, nativeClipSrcRootDir, targetName, bundleIdentifier, deploymentTarget }) => {
   return withXcodeProject(config, (config) => {
     const xcodeProject = config.modResults;
 
@@ -47,6 +48,7 @@ export const withXcode: ConfigPlugin<{
 
     addPbxGroup(xcodeProject, {
       projectName: projectName as string,
+      nativeClipSrcRootDir,
       targetName,
       platformProjectRoot,
     });

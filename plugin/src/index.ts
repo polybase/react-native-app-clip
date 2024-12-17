@@ -8,6 +8,7 @@ import { withXcode } from "./withXcode";
 
 const withAppClip: ConfigPlugin<{
   name?: string;
+  nativeClipSrcRootDir: string;
   bundleIdSuffix?: string;
   targetSuffix?: string;
   groupIdentifier?: string;
@@ -21,6 +22,7 @@ const withAppClip: ConfigPlugin<{
   config,
   {
     name,
+    nativeClipSrcRootDir,
     bundleIdSuffix,
     targetSuffix,
     groupIdentifier,
@@ -68,6 +70,7 @@ const withAppClip: ConfigPlugin<{
       withXcode,
       {
         name,
+        nativeClipSrcRootDir,
         targetName,
         bundleIdentifier,
         deploymentTarget,
