@@ -71,17 +71,17 @@ export const withPlist: ConfigPlugin<{
     fs.writeFileSync(filePath, plist.build(infoPlist));
 
     // Expo.plist
-    const expoPlistFilePath = path.join(targetPath, "Supporting/Expo.plist");
-    const expoPlist: InfoPlist = {
-      EXUpdatesRuntimeVersion: "exposdk:51.0.0", // TODO
-      // EXUpdatesURL: "", // TODO
-      EXUpdatesEnabled: false,
-    };
+    // const expoPlistFilePath = path.join(targetPath, "Supporting/Expo.plist");
+    // const expoPlist: InfoPlist = {
+    //   EXUpdatesRuntimeVersion: "exposdk:51.0.0", // TODO
+    //   // EXUpdatesURL: "", // TODO
+    //   EXUpdatesEnabled: false,
+    // };
 
-    fs.mkdirSync(path.dirname(expoPlistFilePath), {
-      recursive: true,
-    });
-    fs.writeFileSync(expoPlistFilePath, plist.build(expoPlist));
+    // fs.mkdirSync(path.dirname(expoPlistFilePath), {
+    //   recursive: true,
+    // });
+    // fs.writeFileSync(expoPlistFilePath, plist.build(expoPlist));
 
     return config;
   });

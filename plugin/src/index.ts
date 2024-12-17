@@ -2,8 +2,6 @@ import { IOSConfig, withPlugins, type ConfigPlugin } from "expo/config-plugins";
 
 import { withConfig } from "./withConfig";
 import { withEntitlements } from "./withEntitlements";
-import { withPlist } from "./withPlist";
-import { withPodfile } from "./withPodfile";
 import { withXcode } from "./withXcode";
 
 const withAppClip: ConfigPlugin<{
@@ -55,16 +53,6 @@ const withAppClip: ConfigPlugin<{
     [
       withEntitlements,
       { targetName, groupIdentifier, appleSignin, applePayMerchantIds },
-    ],
-    [withPodfile, { targetName, excludedPackages }],
-    [
-      withPlist,
-      {
-        targetName,
-        deploymentTarget,
-        requestEphemeralUserNotification,
-        requestLocationConfirmation,
-      },
     ],
     [
       withXcode,
