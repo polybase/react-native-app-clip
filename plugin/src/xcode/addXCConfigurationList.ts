@@ -28,7 +28,8 @@ export function addXCConfigurationList(
     PRODUCT_NAME: `"${name}"`,
     SWIFT_VERSION: "5.0",
     VERSIONING_SYSTEM: `"apple-generic"`,
-    // TARGETED_DEVICE_FAMILY: `"1,2"`,
+    // 1 - iPhone, 2 - iPad, 1,2 - universal (both iPhone and iPad)
+    TARGETED_DEVICE_FAMILY: `"1,2"`,
     CODE_SIGN_ENTITLEMENTS: `${targetName}/${targetName}.entitlements`,
   };
 

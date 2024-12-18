@@ -21,7 +21,7 @@ export function addBuildPhases(
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/AppClips"`;
   const folderType = "watch2_app"; // "watch2_app" uses the same subfolder spec (16), app_clip does not exist in cordova-node-xcode yet
 
-  // TODO - make this generic
+  // TODO - avoid hardcoding
   const buildPhaseFiles = ['ContentView.swift', 'clippyClipApp.swift']
   // const buildPhaseFiles = ["AppDelegate.mm", "main.m"];
 
@@ -86,6 +86,16 @@ export function addBuildPhases(
   //   folderType,
   //   buildPath,
   // );
+
+  // TODO - avoid hardcoding
+  xcodeProject.addBuildPhase(
+    ["Preview Content", "Assets.xcassets"],
+    "PBXResourcesBuildPhase",
+    groupName,
+    targetUuid,
+    folderType,
+    buildPath
+  )
 
   // Add shell script build phase
   // xcodeProject.addBuildPhase(
