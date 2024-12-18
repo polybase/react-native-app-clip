@@ -3,16 +3,16 @@ import util from "node:util";
 import path from 'node:path';
 import fs from 'node:fs';
 
-const getSwiftFilesFromDir = (dirPath: string): string[] => {
+const getSwiftFilesFromDir = (dirPath: string, commonPath: string): string[] => {
   const entries = fs.readdirSync(dirPath);
   const swiftFiles = [];
 
   for (const entry of entries) {
     const fullPath = path.join(dirPath, entry);
     if (fs.lstatSync(fullPath).isDirectory()) {
-      swiftFiles.push(...getSwiftFilesFromDir(fullPath));
+      swiftFiles.push(...getSwiftFilesFromDir(fullPath, commonPath));
     } else if (entry.endsWith('.swift')) {
-      swiftFiles.push(fullPath);
+      swiftFiles.push(path.relative(commonPath, fullPath));
     }
   }
 
@@ -27,8 +27,7 @@ export function addBuildPhases(
     groupName,
     productFile,
     targetName,
-    platformProjectRoot,
-    nativeClipSrcRootDir
+    platformProjectRoot
   }: {
     targetUuid: string;
     groupName: string;
@@ -40,29 +39,22 @@ export function addBuildPhases(
     };
     targetName: string;
     platformProjectRoot: string;
-    nativeClipSrcRootDir: string;
   },
 ) {
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/AppClips"`;
   const folderType = "watch2_app"; // "watch2_app" uses the same subfolder spec (16), app_clip does not exist in cordova-node-xcode yet
 
   // Copy the essential Native app clip files that need to be compiled
-  // <Native App Clip name>App.swift - the entrypoint (`@main`). Eg: clippyClipApp.swift
-  // ContentView.swift - the main UI page
-  const nativeClipSrcRootDirPath = path.join(path.join(platformProjectRoot, ".."), nativeClipSrcRootDir)
-  // const buildPhaseFiles = ['ContentView.swift', util.format("%sApp.swift", targetName)]
-  const allSwiftFiles = getSwiftFilesFromDir(nativeClipSrcRootDirPath)
-  console.log(`[addBuildPhases] All Swift files...`)
+  const targetPath = path.join(platformProjectRoot, targetName);
+  const allSwiftFiles = getSwiftFilesFromDir(targetPath, platformProjectRoot)
+  console.log(`[addBuildPhases] Adding Swift files to Build Phase...`)
   for (const swiftFile of allSwiftFiles) {
     console.log(swiftFile)
   }
 
-  // const buildPhaseFiles = ['ContentView.swift', util.format("%sApp.swift", targetName)]
-  const buildPhaseFiles = allSwiftFiles
-
   // Sources build phase
   xcodeProject.addBuildPhase(
-    buildPhaseFiles,
+    allSwiftFiles,
     "PBXSourcesBuildPhase",
     groupName,
     targetUuid,
