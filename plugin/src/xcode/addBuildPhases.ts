@@ -7,6 +7,7 @@ export function addBuildPhases(
     targetUuid,
     groupName,
     productFile,
+    targetName
   }: {
     targetUuid: string;
     groupName: string;
@@ -16,13 +17,16 @@ export function addBuildPhases(
       basename: string;
       group: string;
     };
+    targetName: string
   },
 ) {
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/AppClips"`;
   const folderType = "watch2_app"; // "watch2_app" uses the same subfolder spec (16), app_clip does not exist in cordova-node-xcode yet
 
-  // TODO - avoid hardcoding
-  const buildPhaseFiles = ['ContentView.swift', 'clippyClipApp.swift']
+  // Copy the essential Native app clip files that need to be compiled
+  // <Native App Clip name>App.swift - the entrypoint (`@main`). Eg: clippyClipApp.swift
+  // ContenView.swift - the main UI page
+  const buildPhaseFiles = ['ContentView.swift', util.format("%sApp.swift", targetName)]
 
   // Sources build phase
   xcodeProject.addBuildPhase(
@@ -62,7 +66,6 @@ export function addBuildPhases(
     buildPath,
   );
 
-  // TODO - avoid hardcoding
   xcodeProject.addBuildPhase(
     ["Preview Content", "Assets.xcassets"],
     "PBXResourcesBuildPhase",
