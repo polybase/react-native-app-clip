@@ -57,7 +57,9 @@ export const withXcode: ConfigPlugin<{
       targetUuid,
       groupName,
       productFile,
-      targetName
+      targetName,
+      platformProjectRoot,
+      nativeClipSrcRootDir
     });
 
     return config;

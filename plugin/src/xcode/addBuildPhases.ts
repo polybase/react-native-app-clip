@@ -1,5 +1,24 @@
 import type { XcodeProject } from "@expo/config-plugins";
 import util from "node:util";
+import path from 'node:path';
+import fs from 'node:fs';
+
+const getSwiftFilesFromDir = (dirPath: string): string[] => {
+  const entries = fs.readdirSync(dirPath);
+  const swiftFiles = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry);
+    if (fs.lstatSync(fullPath).isDirectory()) {
+      swiftFiles.push(...getSwiftFilesFromDir(fullPath));
+    } else if (entry.endsWith('.swift')) {
+      swiftFiles.push(fullPath);
+    }
+  }
+
+  return swiftFiles;
+}
+
 
 export function addBuildPhases(
   xcodeProject: XcodeProject,
@@ -7,7 +26,9 @@ export function addBuildPhases(
     targetUuid,
     groupName,
     productFile,
-    targetName
+    targetName,
+    platformProjectRoot,
+    nativeClipSrcRootDir
   }: {
     targetUuid: string;
     groupName: string;
@@ -17,7 +38,9 @@ export function addBuildPhases(
       basename: string;
       group: string;
     };
-    targetName: string
+    targetName: string;
+    platformProjectRoot: string;
+    nativeClipSrcRootDir: string;
   },
 ) {
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/AppClips"`;
@@ -25,8 +48,17 @@ export function addBuildPhases(
 
   // Copy the essential Native app clip files that need to be compiled
   // <Native App Clip name>App.swift - the entrypoint (`@main`). Eg: clippyClipApp.swift
-  // ContenView.swift - the main UI page
-  const buildPhaseFiles = ['ContentView.swift', util.format("%sApp.swift", targetName)]
+  // ContentView.swift - the main UI page
+  const nativeClipSrcRootDirPath = path.join(path.join(platformProjectRoot, ".."), nativeClipSrcRootDir)
+  // const buildPhaseFiles = ['ContentView.swift', util.format("%sApp.swift", targetName)]
+  const allSwiftFiles = getSwiftFilesFromDir(nativeClipSrcRootDirPath)
+  console.log(`[addBuildPhases] All Swift files...`)
+  for (const swiftFile of allSwiftFiles) {
+    console.log(swiftFile)
+  }
+
+  // const buildPhaseFiles = ['ContentView.swift', util.format("%sApp.swift", targetName)]
+  const buildPhaseFiles = allSwiftFiles
 
   // Sources build phase
   xcodeProject.addBuildPhase(
