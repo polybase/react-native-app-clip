@@ -17,15 +17,8 @@ export function addPbxGroup(
     fs.mkdirSync(targetPath, { recursive: true });
   }
 
-  // const filesToCopy = [
-  //   "SplashScreen.storyboard",
-  //   "AppDelegate.h",
-  //   "AppDelegate.mm",
-  //   "main.m",
-  // ];
-
+  // Copy the Native app clip files over to the newly created app clip
   const nativeClipSrcRootDirPath = path.join(path.join(platformProjectRoot, ".."), nativeClipSrcRootDir)
-  console.log(`[addPbxGroup] nativeSrcRootDirPath = ${nativeClipSrcRootDirPath}`)
   const filesToCopy = fs.readdirSync(nativeClipSrcRootDirPath)
 
   for (const file of filesToCopy) {
@@ -47,23 +40,7 @@ export function addPbxGroup(
   );
   copyFolderRecursiveSync(imagesXcassetsSource, targetPath);
 
-  // Add PBX group
-  // const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
-  //   [
-  //     "AppDelegate.h",
-  //     "AppDelegate.mm",
-  //     "main.m",
-  //     "Info.plist",
-  //     "Images.xcassets",
-  //     "SplashScreen.storyboard",
-  //     `${targetName}.entitlements`,
-  //     "Supporting/Expo.plist",
-  //     /* "main.jsbundle", */
-  //   ],
-  //   targetName,
-  //   targetName,
-  // );
-
+  console.log(`[addPbxGroup] adding to PBX group`)
   const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(filesToCopy, targetName, targetName)
 
   // Add PBXGroup to top level group

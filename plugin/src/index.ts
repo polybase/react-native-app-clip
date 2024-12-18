@@ -11,11 +11,8 @@ const withAppClip: ConfigPlugin<{
   targetSuffix?: string;
   groupIdentifier?: string;
   deploymentTarget?: string;
-  requestEphemeralUserNotification?: boolean;
-  requestLocationConfirmation?: boolean;
   appleSignin?: boolean;
   applePayMerchantIds?: string[];
-  excludedPackages?: string[];
 }> = (
   config,
   {
@@ -25,11 +22,8 @@ const withAppClip: ConfigPlugin<{
     targetSuffix,
     groupIdentifier,
     deploymentTarget,
-    requestEphemeralUserNotification,
-    requestLocationConfirmation,
     appleSignin,
-    applePayMerchantIds,
-    excludedPackages,
+    applePayMerchantIds
   } = {},
 ) => {
   name ??= "Clip";
