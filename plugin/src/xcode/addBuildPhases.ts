@@ -11,7 +11,7 @@ const getSwiftFilesFromDir = (dirPath: string, commonPath: string): string[] => 
     const fullPath = path.join(dirPath, entry);
     if (fs.lstatSync(fullPath).isDirectory()) {
       swiftFiles.push(...getSwiftFilesFromDir(fullPath, commonPath));
-    } else if (entry.endsWith('.swift')) {
+    } else if (entry.endsWith('.swift'))  {
       swiftFiles.push(path.relative(commonPath, fullPath));
     }
   }
@@ -44,10 +44,10 @@ export function addBuildPhases(
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/AppClips"`;
   const folderType = "watch2_app"; // "watch2_app" uses the same subfolder spec (16), app_clip does not exist in cordova-node-xcode yet
 
-  // Copy the essential Native app clip files that need to be compiled
+  // Copy the essential Native app clip files that need to be compiled 
   const targetPath = path.join(platformProjectRoot, targetName);
   const allSwiftFiles = getSwiftFilesFromDir(targetPath, platformProjectRoot)
-  console.log(`[addBuildPhases] Adding Swift files to Build Phase...`)
+  console.log(`[addBuildPhases] Adding Swift and storyboard files to Build Phase...`)
   for (const swiftFile of allSwiftFiles) {
     console.log(swiftFile)
   }
@@ -91,7 +91,7 @@ export function addBuildPhases(
   );
 
   xcodeProject.addBuildPhase(
-    ["Preview Content", "Assets.xcassets"],
+    ["Preview Content", "Assets.xcassets", "LaunchScreen.storyboard"],
     "PBXResourcesBuildPhase",
     groupName,
     targetUuid,
