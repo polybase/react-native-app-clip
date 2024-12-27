@@ -11,7 +11,7 @@ const updateParentAppAppGroupEntitlement = (iosConfig: ExportedConfigWithProps<I
     return iosConfig
   }
 
-  console.log(`[updateParentAppAppGroupEntitlements] Setting App group entitlement for parent epp to: ${groupIdentifier}`)
+  console.log(`[updateParentAppAppGroupEntitlements] Setting App group entitlement for parent app to: ${groupIdentifier}`)
   iosConfig.modResults["com.apple.security.application-groups"] = [groupIdentifier];
   return iosConfig
 }
