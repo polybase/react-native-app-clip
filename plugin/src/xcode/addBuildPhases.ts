@@ -19,7 +19,6 @@ const getSwiftFilesFromDir = (dirPath: string, commonPath: string): string[] => 
   return swiftFiles;
 }
 
-
 export function addBuildPhases(
   xcodeProject: XcodeProject,
   {

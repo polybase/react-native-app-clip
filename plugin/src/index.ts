@@ -4,6 +4,7 @@ import { withConfig } from "./withConfig";
 import { withEntitlements } from "./withEntitlements";
 import { withXcode } from "./withXcode";
 import { withParentEntitlements } from "./withParentEntitlements";
+import { withAppClipInfoPlist } from "./withAppClipInfoPlist";
 
 const withAppClip: ConfigPlugin<{
   name?: string;
@@ -63,6 +64,10 @@ const withAppClip: ConfigPlugin<{
         deploymentTarget,
       },
     ],
+    [
+      withAppClipInfoPlist,
+      { targetName }
+    ]
   ]);
 
   return modifiedConfig;
