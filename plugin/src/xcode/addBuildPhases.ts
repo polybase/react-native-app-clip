@@ -3,20 +3,23 @@ import util from "node:util";
 import path from 'node:path';
 import fs from 'node:fs';
 
-const getSwiftFilesFromDir = (dirPath: string, commonPath: string): string[] => {
+const getFilesFromDir = (dirPath: string, commonPath: string, filetypes: string[]): string[] => {
   const entries = fs.readdirSync(dirPath);
-  const swiftFiles = [];
+  const files = [];
 
   for (const entry of entries) {
     const fullPath = path.join(dirPath, entry);
     if (fs.lstatSync(fullPath).isDirectory()) {
-      swiftFiles.push(...getSwiftFilesFromDir(fullPath, commonPath));
-    } else if (entry.endsWith('.swift'))  {
-      swiftFiles.push(path.relative(commonPath, fullPath));
+      files.push(...getFilesFromDir(fullPath, commonPath, filetypes));
+    } else {
+      const matches = filetypes.some((filetype) => entry.endsWith(filetype));
+      if (matches) {
+        files.push(path.relative(commonPath, fullPath));
+      }
     }
   }
 
-  return swiftFiles;
+  return files;
 }
 
 export function addBuildPhases(
@@ -45,12 +48,8 @@ export function addBuildPhases(
 
   // Copy the essential Native app clip files that need to be compiled 
   const targetPath = path.join(platformProjectRoot, targetName);
-  const allSwiftFiles = getSwiftFilesFromDir(targetPath, platformProjectRoot)
-  console.log(`[addBuildPhases] Adding Swift and storyboard files to Build Phase...`)
-  for (const swiftFile of allSwiftFiles) {
-    console.log(swiftFile)
-  }
-
+  const allSwiftFiles = getFilesFromDir(targetPath, platformProjectRoot, [".swift"])
+  console.log(`[addBuildPhases] Adding Swift and storyboard files to Build Phase: ${JSON.stringify(allSwiftFiles, null, 2)}`)
   // Sources build phase
   xcodeProject.addBuildPhase(
     allSwiftFiles,
@@ -89,8 +88,14 @@ export function addBuildPhases(
     buildPath,
   );
 
+  // get all the font files - this assumes that fonts are stored in:
+  // <AppClipRootDir>/<AppClipDir>/Fonts
+  const fontPath = path.join(platformProjectRoot, targetName, "Fonts")
+  const allFontFiles = getFilesFromDir(fontPath, platformProjectRoot, [".otf", ".ttf"])
+  console.log(`[addBuildPhases] Found font files: ${JSON.stringify(allFontFiles, null, 2)}`)
+
   xcodeProject.addBuildPhase(
-    ["Preview Content", "Assets.xcassets", "LaunchScreen.storyboard"],
+    ["Preview Content", "Assets.xcassets", "LaunchScreen.storyboard", ...allFontFiles],
     "PBXResourcesBuildPhase",
     groupName,
     targetUuid,
