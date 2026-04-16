@@ -88,14 +88,8 @@ export function addBuildPhases(
     buildPath,
   );
 
-  // get all the font files - this assumes that fonts are stored in:
-  // <AppClipRootDir>/<AppClipDir>/Fonts
-  const fontPath = path.join(platformProjectRoot, targetName, "Fonts")
-  const allFontFiles = getFilesFromDir(fontPath, platformProjectRoot, [".otf", ".ttf"])
-  console.log(`[addBuildPhases] Found font files: ${JSON.stringify(allFontFiles, null, 2)}`)
-
   xcodeProject.addBuildPhase(
-    ["Preview Content", "Assets.xcassets", "LaunchScreen.storyboard", ...allFontFiles],
+    ["Preview Content", "Assets.xcassets", "LaunchScreen.storyboard"],
     "PBXResourcesBuildPhase",
     groupName,
     targetUuid,
